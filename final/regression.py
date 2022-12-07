@@ -74,7 +74,9 @@ plt.show()
 # We specify random seed so that the train and test data set always have the same rows, respectively
 np.random.seed(0)
 
+#Getting just 2019
 
+df = df[df["Year"] == 2019]
 
 #Get rid of categorical values
 new_df = df[["Economy: GDP per capita", "Social support", "Healthy life expectancy", "Freedom", "Perceptions of corruption", "Score"]]
@@ -87,9 +89,8 @@ print(new_df)
 # plt.savefig("GDP_freedom.png")
 # plt.show()
 
-
-#Variables that are highly correlated with score: GDP, Healthy Life Expectancy 
-X = new_df[["Economy: GDP per capita", "Healthy life expectancy", "Social support"]]
+#Adjust X to include the variables you want to use to compute the model 
+X = new_df[["Economy: GDP per capita", "Healthy life expectancy"]]
 y = new_df["Score"]
 
 
@@ -100,7 +101,8 @@ scale = StandardScaler()
 
 minmaxscaler = MinMaxScaler()
 
-num_vars = ["Economy: GDP per capita", "Healthy life expectancy", "Social support"]
+#Adjust these variables to include the ones you want for the regression model 
+num_vars = ["Economy: GDP per capita", "Healthy life expectancy"]
 
 X[num_vars] = minmaxscaler.fit_transform(X[num_vars])
 
@@ -133,7 +135,7 @@ lm.fit(X_train, y_train)                      # fitting the model with the train
 coefficient = lm.coef_
 
 coefficient_df = pd.DataFrame(list(zip(X_train.columns, lm.coef_)), columns=['features', 'coefficients'])
-coefficient_df.to_csv("GDP_life_social_coefficientdf.csv")
+coefficient_df.to_csv("2019GDP_life_coefficientdf.csv")
 
 
 
@@ -146,5 +148,5 @@ actual_vs_pred = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
 actual_vs_pred = actual_vs_pred.sort_values(by='Predicted', ascending=False)
 print(actual_vs_pred)
 
-actual_vs_pred.to_csv("GDP_life_socialpreds.csv")
+actual_vs_pred.to_csv("2019GDP_lifepreds.csv")
 
