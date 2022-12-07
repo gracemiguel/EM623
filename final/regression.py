@@ -6,6 +6,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler , StandardScaler
 from sklearn.linear_model import LinearRegression
 from scipy.stats import pearsonr, spearmanr
+import statsmodels.api as sm
+from sklearn.metrics import mean_squared_error as MSE
+
 df = pd.read_csv("world_happiness_15_21.csv")
 
 total_null = df.isnull().sum() #find total null values in each column
@@ -90,7 +93,7 @@ print(new_df)
 # plt.show()
 
 #Adjust X to include the variables you want to use to compute the model 
-X = new_df[["Economy: GDP per capita", "Healthy life expectancy"]]
+X = new_df[["Economy: GDP per capita",  "Social support"]]
 y = new_df["Score"]
 
 
@@ -102,7 +105,7 @@ scale = StandardScaler()
 minmaxscaler = MinMaxScaler()
 
 #Adjust these variables to include the ones you want for the regression model 
-num_vars = ["Economy: GDP per capita", "Healthy life expectancy"]
+num_vars = ["Economy: GDP per capita",  "Social support"]
 
 X[num_vars] = minmaxscaler.fit_transform(X[num_vars])
 
@@ -135,9 +138,21 @@ lm.fit(X_train, y_train)                      # fitting the model with the train
 coefficient = lm.coef_
 
 coefficient_df = pd.DataFrame(list(zip(X_train.columns, lm.coef_)), columns=['features', 'coefficients'])
-coefficient_df.to_csv("2019GDP_life_coefficientdf.csv")
+coefficient_df.to_csv("2019GDP_social_coefficientdf.csv")
+
+#Get r_squared value 
+print("This is the R squared value", lm.score(X, y))
 
 
+#Get summary statistics 
+#add constant to predictor variables
+x = sm.add_constant(X)
+
+#fit linear regression model
+model = sm.OLS(y, x).fit()
+
+#view model summary
+print(model.summary())
 
 # making predictions on the test data
 
@@ -146,7 +161,8 @@ y_pred = lm.predict(X_test)
 # comparing actual values with predicted values
 actual_vs_pred = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
 actual_vs_pred = actual_vs_pred.sort_values(by='Predicted', ascending=False)
-print(actual_vs_pred)
 
-actual_vs_pred.to_csv("2019GDP_lifepreds.csv")
+print('Root Mean Squared Error:', np.sqrt(MSE(y_test, y_pred)))
+
+actual_vs_pred.to_csv("2019GDP_socialpreds.csv")
 
