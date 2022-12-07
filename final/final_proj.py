@@ -1,4 +1,6 @@
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 df15 = pd.read_csv("2015.csv")
@@ -35,8 +37,6 @@ df_total = pd.concat([df15, df16, df17, df18, df19, df20, df21_], axis=0)
 
 #ONLY COMPUTE THIS ONCE TO DOWNLOAD THE COMBINED FILE
 # df_total.to_csv("world_happiness_15_21.csv")
+# df_total.to_csv("world_happiness_15_21.csv")
 
-
-print(df_total.info())
-print(df_total.head())
 
